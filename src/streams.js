@@ -34,7 +34,7 @@ function cachingFactorialStream(){
 				return next;
 			}
 		};
-	}
+	};
 	return fact(0,1);
 }
 
