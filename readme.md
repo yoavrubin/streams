@@ -5,7 +5,7 @@ A generator is something that has the field *first* and a method *rest*
 
 From these, all the rest is created.
 
-For now added two simple generators:
+For now added three simple generators:
 
 -  intGen :  generates natural numbers 
 
