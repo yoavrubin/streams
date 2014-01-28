@@ -11,4 +11,6 @@ For now added two simple generators:
 
 - factorialGenerator : generates a stream of the factorials
 
+- cachingFactorialStream : generates a stream of factorials, but each element in the stream is calculated only once
+
 There are several functions that operate on generators, taking, droping, mapping and filtering 
