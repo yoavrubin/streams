@@ -1,4 +1,4 @@
-function intGen(){
+function intStreamGen(){
 
 	function generator(seed, stepFunc, actionFunc){
 		return {
@@ -9,48 +9,8 @@ function intGen(){
 	return generator(0, function(n){return n+1;}, function(n){return n;});
 }
 
-
-function takeWhileLazy(gen, pred){
-    var _tw = function(g){
-        if(pred(g.first)){
-            return {
-                first: g.first,
-                rest: function(){return _tw(g.rest());}
-            };    
-        }
-        return null;
-    };
-    return _tw(gen);
-}
-
-
-function takeWhile(gen, pred){
-    while(pred(gen.first)){
-          res.push(gen.first);
-        gen = gen.rest();
-    }
-    return res;   
-}
-
-function take(gen, n){
-	var res = [];
-	for(var i=0; i<n;i++, gen = gen.rest()){
-		  res.push(gen.first);
-	}
-	return res;
-}
-
-
-
-function dropN(gen, count){
-	while(count-- >0){
-		gen = gen.rest();
-	}
-	return gen;
-}
-
-
-function factorialGenerator(){
+// a stream of factorial numbers
+function factorialStreamGenerator(){
 	var calcFn = function(n, accum){
 		return {
 			first: accum,
@@ -58,23 +18,81 @@ function factorialGenerator(){
 		};
 	};
 	
-	return calcFn(1,1);
+	return calcFn(0,1);
+}
+
+// a stream that each element in it is calculated only once
+function cachingFactorialStream(){
+	function fact(n, accum){
+		n += 1;
+		var next = null;
+		return {
+			first: accum,
+			rest: function(){
+				if(next) return next;
+				next = fact(n, accum*n); 
+				return next;
+			}
+		};
+	}
+	return fact(0,1);
 }
 
 
-function map(gen, f){
-	var _mapGen = function(gen){
+
+function takeWhileLazy(strm, pred){
+    var _tw = function(sm){
+        if(pred(sm.first)){
+            return {
+                first: sm.first,
+                rest: function(){return _tw(sm.rest());}
+            };    
+        }
+        return null;
+    };
+    return _tw(strm);
+}
+
+
+function takeWhile(strm, pred){
+    while(pred(strm.first)){
+          res.push(strm.first);
+        strm = strm.rest();
+    }
+    return res;   
+}
+
+function take(strm, n){
+	var res = [];
+	for(var i=0; i<n;i++, strm = strm.rest()){
+		  res.push(strm.first);
+	}
+	return res;
+}
+
+
+
+function dropN(strm, count){
+	while(count-- >0){
+		strm = strm.rest();
+	}
+	return strm;
+}
+
+
+function map(strm, f){
+	var _mapGen = function(sm){
 		return {
-			first: f(gen.first),
-			rest: function(){return _mapGen(gen.rest());}
+			first: f(sm.first),
+			rest: function(){return _mapGen(sm.rest());}
 		};
 	};
-	return _mapGen(gen);
+	return _mapGen(strm);
 }
 
-function filter(gen, pred){
-	var _filtGen = function(gen){
-		var g = gen;
+function filter(strm, pred){
+	var _filtGen = function(sm){
+		var g = sm;
 		while(!pred(g.first)) 
 			g = g.rest();
 		return {
@@ -82,7 +100,7 @@ function filter(gen, pred){
 			rest: function(){return _filtGen(g.rest());}
 		};
 	};
-	return _filtGen(gen);
+	return _filtGen(strm);
 }
 
 function streamify(iterable){
@@ -106,45 +124,45 @@ function streamify(iterable){
 	return _iter(iterable);
 }
 
-function partition(gen, n, step){
+function partition(strm, n, step){
     step = step || n;
-    var _partGen = function(g){
-        var tmpGen = g;
+    var _partGen = function(sm){
+        var tmpStrm = sm;
         var res = [];
-        var nextGen = null;
-        for(var i=0;i<n;i++, tmpGen=tmpGen.rest()){
+        var nextStrm = null;
+        for(var i=0;i<n;i++, tmpStrm=tmpStrm.rest()){
             if(step == i)
-                nextGen = tmpGen;
-            res.push(tmpGen.first);
+            	nextStrm = tmpStrm;
+            res.push(tmpStrm.first);
         }
-        nextGen = nextGen || tmpGen;
+        nextStrm = nextStrm || tmpStrm;
         return {
             first:res,
-            rest: function(){return _partGen(nextGen);}
+            rest: function(){return _partGen(nextStrm);}
         };
     };
-    return _partGen(gen);
+    return _partGen(strm);
 }
 
-function reductions(gen, f, seed){
-	var _reducs = function(g, accum){
-		var res = f(accum, g.first);
+function reductions(strm, f, seed){
+	var _reducs = function(sm, accum){
+		var res = f(accum, sm.first);
 		return {
 			first: res,
-			rest: function(){return _reducs(g.rest(), res);}
+			rest: function(){return _reducs(sm.rest(), res);}
 		};
 	};
 	if(seed != undefined)
-		return _reducs(gen, seed);
-	return _reducs(gen.rest(), gen.first);
+		return _reducs(strm, seed);
+	return _reducs(strm.rest(), strm.first);
 }
 
-function interleave(gen1, gen2){
-	var _inter = function(g1,g2){
+function interleave(strm1, strm2){
+	var _inter = function(sm1,sm2){
 		return {
-			first: g1.first,
-			rest: function(){return _inter(g2, g1.rest());}
+			first: sm1.first,
+			rest: function(){return _inter(sm2, sm1.rest());}
 		};
 	};
-	return _inter(gen1,gen2);
+	return _inter(strm1,strm2);
 }
