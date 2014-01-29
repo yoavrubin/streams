@@ -5,7 +5,7 @@ A generator is something that has the field *first* and a method *rest*
 
 From these, all the rest is created.
 
-For now added three simple generators:
+In adhocMakers.js there are now three simple generators:
 
 -  intGen :  generates natural numbers 
 
@@ -13,4 +13,8 @@ For now added three simple generators:
 
 - cachingFactorialStream : generates a stream of factorials, but each element in the stream is calculated only once
 
-There are several functions that operate on generators, taking, droping, mapping and filtering 
+
+
+In combinators.js there are functions that operate on streams
+
+In generators.js there are functions that take non stream elements and produce streams out of it

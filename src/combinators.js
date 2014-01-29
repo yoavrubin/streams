@@ -1,3 +1,4 @@
+
 function takeWhileLazy(strm, pred){
     var _tw = function(sm){
         if(sm && pred(sm.first)){
@@ -37,7 +38,6 @@ function dropN(strm, count){
 	return strm;
 }
 
-
 function map(strm, f){
 	var _mapGen = function(sm){
 		if(!sm) return null;
@@ -63,24 +63,6 @@ function filter(strm, pred){
 		};
 	};
 	return _filtGen(strm);
-}
-
-function streamify(iterable){
-	var decapFunc = null;
-	if(typeof iterable === "string")
-		decapFunc = function(str){return str.substring(1);};
-	if(Object.prototype.toString.call(iterable) == "[object Array]")
-		decapFunc = function(arr){return arr.slice(1);};
-	var _iter = function(itr){
-		if(itr.length === 0){
-			return null;
-		}
-		return {
-			first: itr[0],
-			rest: function(){return _iter(decapFunc(itr));}
-		};
-	};
-	return _iter(iterable);
 }
 
 function partition(strm, n, step){
@@ -127,25 +109,4 @@ function interleave(strm1, strm2){
 		};
 	};
 	return _inter(strm1,strm2);
-}
-
-function repeat(val){
-	var _rep = function(){
-		return {
-			first:val,
-			rest: function(){return _rep();}
-		};
-	}
-	return _rep();
-}
-
-function cycle(iterable, showHoles){
-	var len = iterable.length;
-	var _cyc = function(index){
-		return {
-			first: iterable[index],
-			rest: function(){return _cyc((index+1) % len);}
-		};
-	};
-	return _cyc(0);
 }
