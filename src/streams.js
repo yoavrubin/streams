@@ -170,3 +170,13 @@ function interleave(strm1, strm2){
 	};
 	return _inter(strm1,strm2);
 }
+
+function repeat(val){
+	var _rep = function(){
+		return {
+			first:val,
+			rest: function(){return _rep();}
+		};
+	}
+	return _rep();
+}
