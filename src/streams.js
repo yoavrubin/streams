@@ -82,6 +82,7 @@ function dropN(strm, count){
 
 function map(strm, f){
 	var _mapGen = function(sm){
+		if(!sm) return null;
 		return {
 			first: f(sm.first),
 			rest: function(){return _mapGen(sm.rest());}
@@ -92,9 +93,12 @@ function map(strm, f){
 
 function filter(strm, pred){
 	var _filtGen = function(sm){
+		if(!sm) return null;
 		var g = sm;
-		while(!pred(g.first)) 
+		while(!pred(g.first)){ 
 			g = g.rest();
+			if(!g) return null;
+		}
 		return {
 			first:g.first,
 			rest: function(){return _filtGen(g.rest());}
@@ -124,10 +128,11 @@ function streamify(iterable){
 function partition(strm, n, step){
     step = step || n;
     var _partGen = function(sm){
+    	if(!sm) return null;
         var tmpStrm = sm;
         var res = [];
         var nextStrm = null;
-        for(var i=0;i<n;i++, tmpStrm=tmpStrm.rest()){
+        for(var i=0;tmpStrm && i<n;i++, tmpStrm=tmpStrm.rest()){
             if(step == i)
             	nextStrm = tmpStrm;
             res.push(tmpStrm.first);
@@ -143,6 +148,7 @@ function partition(strm, n, step){
 
 function reductions(strm, f, seed){
 	var _reducs = function(sm, accum){
+		if(!sm) return null;	
 		var res = f(accum, sm.first);
 		return {
 			first: res,
@@ -156,6 +162,7 @@ function reductions(strm, f, seed){
 
 function interleave(strm1, strm2){
 	var _inter = function(sm1,sm2){
+		if(!sm1 || !sm2) return null;
 		return {
 			first: sm1.first,
 			rest: function(){return _inter(sm2, sm1.rest());}
