@@ -180,3 +180,14 @@ function repeat(val){
 	}
 	return _rep();
 }
+
+function cycle(iterable, showHoles){
+	var len = iterable.length;
+	var _cyc = function(index){
+		return {
+			first: iterable[index],
+			rest: function(){return _cyc((index+1) % len);}
+		};
+	};
+	return _cyc(0);
+}
