@@ -42,7 +42,7 @@ function cachingFactorialStream(){
 
 function takeWhileLazy(strm, pred){
     var _tw = function(sm){
-        if(pred(sm.first)){
+        if(sm && pred(sm.first)){
             return {
                 first: sm.first,
                 rest: function(){return _tw(sm.rest());}
@@ -55,7 +55,7 @@ function takeWhileLazy(strm, pred){
 
 
 function takeWhile(strm, pred){
-    while(pred(strm.first)){
+    while(strm && pred(strm.first)){
           res.push(strm.first);
         strm = strm.rest();
     }
@@ -64,7 +64,7 @@ function takeWhile(strm, pred){
 
 function take(strm, n){
 	var res = [];
-	for(var i=0; i<n;i++, strm = strm.rest()){
+	for(var i=0;strm && i<n;i++, strm = strm.rest()){
 		  res.push(strm.first);
 	}
 	return res;
@@ -73,7 +73,7 @@ function take(strm, n){
 
 
 function dropN(strm, count){
-	while(count-- >0){
+	while(count-- >0 && strm){
 		strm = strm.rest();
 	}
 	return strm;
