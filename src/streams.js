@@ -110,11 +110,8 @@ function streamify(iterable){
 	if(Object.prototype.toString.call(iterable) == "[object Array]")
 		decapFunc = function(arr){return arr.slice(1);};
 	var _iter = function(itr){
-		if(itr == null){
-			return {
-				first: null,
-				rest: function(){return null;}
-			};
+		if(itr.length === 0){
+			return null;
 		}
 		return {
 			first: itr[0],
