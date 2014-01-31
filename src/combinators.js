@@ -117,10 +117,10 @@ function interleave(strm1, strm2){
  * These arguments do not include the stream, each combinator is fed by the stream created by the previous combinator and the arguments for it, 
  * and returns the stream for the next combinator, sort of a reduce. Note that the arguments for the combinator are either one element or an array of several
  * things.
- e.g., combineCombinators(someStream, 
+ e.g., thrush(someStream, 
 									   map, [function(i){return i+1}], 
 									   filter, function(t){return t%2;}) */
-function combineCombinators(strm/*, pairs of funcs and args beside the stream */){
+function thrush(strm/*, pairs of funcs and args beside the stream */){
 	if(!strm || arguments.length %2 === 0) return null;
 	var args = arguments;
 	var resStrm = strm, fn, fArgs;
