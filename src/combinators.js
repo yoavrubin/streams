@@ -110,3 +110,26 @@ function interleave(strm1, strm2){
 	};
 	return _inter(strm1,strm2);
 }
+
+
+/*
+ * a function that takes a stream and pairs of combinator+arguments for a call for that combinator. 
+ * These arguments do not include the stream, each combinator is fed by the stream created by the previous combinator and the arguments for it, 
+ * and returns the stream for the next combinator, sort of a reduce. Note that the arguments for the combinator are either one element or an array of several
+ * things.
+ e.g., combineCombinators(someStream, 
+									   map, [function(i){return i+1}], 
+									   filter, function(t){return t%2;}) */
+function combineCombinators(strm/*, pairs of funcs and args beside the stream */){
+	if(!strm || arguments.length %2 === 0) return null;
+	var args = arguments;
+	var resStrm = strm, fn, fArgs;
+	for(var i=1, l=args.length;i<l;i += 2){
+		fn = args[i];
+		fArgs = args[i+1];
+		if(!Array.isArray(fArgs)) fArgs = [fArgs];
+		fArgs.unshift(resStrm);
+		resStrm = fn.apply(null, fArgs)
+	}
+	return resStrm;
+}
