@@ -130,6 +130,6 @@ function thrush(strm/*, pairs of funcs and args beside the stream */){
 		if(!Array.isArray(fArgs)) fArgs = [fArgs];
 		fArgs.unshift(resStrm);
 		resStrm = fn.apply(null, fArgs)
-	}
+	} 
 	return resStrm;
 }
